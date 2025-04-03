@@ -19,7 +19,7 @@ void define_ports(void) {
     P5DIR |= BIT4;
     P5OUT &= ~BIT4;
     
-    // RW (P5.5)
+    // RW (P3.0)
     P3DIR |= BIT0;
     P3OUT &= ~BIT0;
 
