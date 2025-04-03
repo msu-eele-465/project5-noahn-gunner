@@ -2,6 +2,9 @@
 #include <stdbool.h>
 #include "../src/ADC.h"
 
+volatile bool sample_flag = false;
+
+
 int main(void)
 {
     WDTCTL = WDTPW | WDTHOLD;
@@ -19,17 +22,25 @@ int main(void)
 
     PM5CTL0 &= ~LOCKLPM5;
 
-    // Optional heartbeat
-    TB0CTL |= TBCLR | TBSSEL__ACLK | MC__CONTINUOUS;
-    TB0CTL &= ~TBIFG;
-    TB0CTL |= TBIE;
+    // Timer for 0.5 s sampling
+    TB0CCTL0 = CCIE;          // Enable CCR0 interrupt
+    TB0CCR0 = 16384;          // 0.5 seconds
+    TB0CTL = TBSSEL__ACLK | MC__UP | TBCLR;  // ACLK, up mode, clear
+
     __enable_interrupt();
 
     while (true) {
-        if ((P4IN & BIT1) == 0) { // Button pressed
-            ADC_sample_and_flash();  // Handles everything inside ADC.c
+        if (sample_flag) {
+            sample_flag = false;
+            ADC_sample_and_flash();
         }
     }
+
+}
+
+#pragma vector = TIMER0_B0_VECTOR
+__interrupt void TIMER0_B0_ISR(void) {
+    sample_flag = true;
 }
 
 #pragma vector = TIMER0_B1_VECTOR
@@ -37,3 +48,4 @@ __interrupt void ISR_TB0_Overflow(void) {
     P1OUT ^= BIT0;
     TB0CTL &= ~TBIFG;
 }
+
