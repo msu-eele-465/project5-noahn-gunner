@@ -104,7 +104,7 @@ void start_up() {
     enable_pulse();
     __delay_cycles(100000);
 
-    // display on, cursor on, blink on
+    // display on, cursor off, blink on
     set_nibble(0b0000);
     enable_pulse();
     __delay_cycles(100000);
