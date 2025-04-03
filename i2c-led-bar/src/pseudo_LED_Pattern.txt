@@ -1,0 +1,33 @@
+BEGIN
+    Disable Watchdog Timer
+    Initialize LED GPIO pins as outputs
+    Initialize Timer (to control pattern timing)
+    Set default LED pattern to "Pattern_Off"
+    Enable global interrupts
+
+    WHILE (True) DO
+        IF (Pattern is "Static") THEN
+            Turn LEDs on in a fixed pattern
+        ELSE IF (Pattern is "Toggle") THEN
+            Alternate LEDs between two states every cycle
+        ELSE IF (Pattern is "Up Counter") THEN
+            Shift the LED pattern left on each update
+        ELSE IF (Pattern is "In & Out") THEN
+            Move LED pattern towards the center and then outward
+        ELSE
+            Turn all LEDs OFF
+        END IF
+
+        WAIT for Timer Interrupt
+    END WHILE
+END
+
+ON Timer Interrupt DO
+    CALL function to update LED pattern
+    RESET Timer Interrupt Flag
+END
+
+DEFINE Pattern_0_Static AS "10101010"
+DEFINE Pattern_1_Toggle AS ["10101010", "01010101"]
+DEFINE Pattern_2_Up AS Incrementing 8-bit counter
+DEFINE Pattern_3_In_Out AS ["00011000", "00100100", "01000010", "10000001", "01000010", "00100100"]
