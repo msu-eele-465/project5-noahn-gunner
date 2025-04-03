@@ -108,7 +108,7 @@ void start_up() {
     set_nibble(0b0000);
     enable_pulse();
     __delay_cycles(100000);
-    set_nibble(0b1111);
+    set_nibble(0b1101);
     enable_pulse();
     __delay_cycles(100000);
 
@@ -155,10 +155,10 @@ void write_character(int upperNibble, int lowerNibble) {
     rs_high();
     set_nibble(upperNibble);
     enable_pulse();
-    __delay_cycles(5000);
+    __delay_cycles(500);
     set_nibble(lowerNibble);
     enable_pulse();
-    __delay_cycles(5000);
+    __delay_cycles(500);
     rs_low();
 }
 
