@@ -1,14 +1,15 @@
-#include "../src/ADC.h"
+#include "ADC.h"
+//#include "lcd.h"
 #include <msp430.h>
 #include <math.h>
 
 #define MAX_WINDOW 10  // You can increase if needed
 
 static float temp_buffer[MAX_WINDOW];
-static int window_size = 3;   // Default n = 3
+volatile int window_size = 3;   // Default n = 3
 static int temp_index = 0;
 static int temp_count = 0;
-
+int counter = 0;
 
 void ADC_init(void) {
     P1SEL0 |= BIT4;
@@ -42,6 +43,7 @@ float ADC_to_celsius(uint16_t adc_val) {
 
 void ADC_set_window_size(int n) {
     int i;
+    counter = 0;
     if (n > 0 && n <= MAX_WINDOW) {
         window_size = n;
         temp_index = 0;
@@ -68,10 +70,24 @@ float ADC_add_sample(float temp) {
 
 void ADC_sample_and_flash(void) {
     uint16_t adc_val = ADC_sample();
-    float voltage = (adc_val * 3.3f) / 4095.0f;
-    float temp = -1481.96f + sqrtf(2196200.0f + (1.8639f - voltage) / 3.88e-6f);
+    volatile float voltage = (adc_val * 3.3f) / 4095.0f;
+    volatile float temp = -1481.96f + sqrtf(2196200.0f + (1.8639f - voltage) / 3.88e-6f);
 
     volatile float avg_temp = ADC_add_sample(temp);  // ← Moving average!
+    counter++;
+
+    if (counter > window_size) {
+        int temp_tens = ((int)avg_temp / 10);
+        int temp_ones = ((int)avg_temp % 10);
+        int temp_tenths = (((int)(10 * avg_temp) % 100) % 10);
+        location_by_coords(2, 1);
+        write_by_ascii('T');
+        write_by_ascii('=');
+        write_by_ascii(temp_tens + 48);
+        write_by_ascii(temp_ones + 48);
+        write_by_ascii('.');
+        write_by_ascii(temp_tenths + 48);
+    }
 
     // Toggle LED as confirmation
     P1OUT |= BIT0;

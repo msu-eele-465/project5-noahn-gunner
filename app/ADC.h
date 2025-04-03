@@ -2,6 +2,7 @@
 #define ADC_H
 
 #include <stdint.h>
+extern volatile int window_size;
 
 void ADC_init(void);
 uint16_t ADC_sample(void);

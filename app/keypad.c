@@ -2,6 +2,8 @@
 #include <msp430.h>
 #include <stdbool.h>
 #include "keypad.h"
+#include "ADC.h"
+#include "lcd.h"
 
 // initialize vars
 char current_key = 'N';
@@ -123,23 +125,28 @@ int lock_state(void) {
 
 // unlocked funtionality
 int button_logic() {
+    
     // --- If in "window size entry" state ---
     if (window_size_entry_state) {
         if (current_key >= '1' && current_key <= '9' && current_key != prev_key) {
-            int new_size = current_key - '0';
-            ADC_set_window_size(new_size);
+            int new_size = current_key - '0';         // Convert to int
+            ADC_set_window_size(new_size);            // Set window size
+            display_window_size(current_key);         // Display N=#
             window_size_entry_state = false;
-            // (Optional) show "Window size set to X"
+            pattern_name(8);
         }
-        return 0;
-    }
+    return 0;
+}
+
 
     // --- If in "pattern number entry" state ---
     if (pattern_number_entry_state) {
         if (current_key >= '0' && current_key <= '7' && current_key != prev_key) {
             int pattern_num = current_key - '0';
+            pattern_name(pattern_num);
             sendCommandByte(pattern_num);
             pattern_number_entry_state = false;
+            pattern_name(8);
             // (Optional) show "Pattern X selected"
         }
         return 0;
@@ -149,14 +156,14 @@ int button_logic() {
     if ((current_key == 'C') && (prev_key != 'C')) {
         window_size_entry_state = true;
         pattern_number_entry_state = false;
-        // (Optional) display "Set window size"
+        pattern_name(9);
         return 0;
     }
 
     if ((current_key == '#') && (prev_key != '#')) {
         pattern_number_entry_state = true;
         window_size_entry_state = false;
-        // (Optional) display "Set pattern"
+        pattern_name(10);
         return 0;
     }
 

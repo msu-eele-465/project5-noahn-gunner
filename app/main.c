@@ -1,8 +1,9 @@
 #include <msp430.h>
 #include <stdbool.h>
-#include "../src/ADC.h"
-#include "../src/keypad.c"
-#include "../src/keypad.h"
+#include "ADC.h"
+//#include "keypad.c"
+#include "keypad.h"
+//#include "lcd.h"
 #include "msp430fr2355.h"
 
 volatile bool sample_flag = false;
@@ -78,6 +79,7 @@ int main(void)
     init_I2C();
 
     ADC_init();
+    define_ports();
 
     PM5CTL0 &= ~LOCKLPM5;
 
@@ -92,6 +94,9 @@ int main(void)
     int i;
     // Enable low-power mode with global interrupts
     //_BIS_SR((LPM0_bits | GIE));
+
+    start_up();
+    start_up();
 
     while (true) {
         if (sample_flag) {

@@ -24,7 +24,9 @@ int lock_state(void);
 int button_logic(void);
 void sendCommandByte(char byte);
 void ADC_set_window_size(int n);  // from ADC.c
-
+void display_temp(float temp);
+void display_window_size(char win);
+void pattern_name(int pattern);
 
 
 #endif
