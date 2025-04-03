@@ -253,3 +253,42 @@ void display_temp(float temp) {
     write_by_ascii('.');
     write_by_ascii(temp_tenths + 48);
 }
+
+void pattern_name(int pattern) {
+    location_by_coords(1, 1);
+    switch (pattern) {
+                case 0:
+                    write_word("static        ");
+                    break;
+                case 1:
+                    write_word("toggle        ");
+                    break;
+                case 2:
+                    write_word("up counter    ");
+                    break;
+                case 3:
+                    write_word("in and out    ");
+                    break;
+                case 4:
+                    write_word("down counter  ");
+                    break;
+                case 5:
+                    write_word("rotate 1 left ");
+                    break;
+                case 6:
+                    write_word("rotate 7 right");
+                    break;
+                case 7:
+                    write_word("fill left     ");
+                    break;
+                case 8:
+                    write_word("              ");
+                    break;
+                case 9: 
+                    write_word("set window size");
+                    break;
+                case 10: 
+                    write_word("set pattern");
+                    break;
+            }
+}
